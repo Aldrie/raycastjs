@@ -1,7 +1,7 @@
 # Raycast Engine With Javascript (Pseudo-3D)
 
 ## Example
-![example](https://github.com/Aldrie/raycastjs/docs/example.gif)
+![example](https://github.com/Aldrie/raycastjs/blob/master/docs/example.gif?raw=true)
 
 ## Technologies
 All the code is written using **Typescript**.
