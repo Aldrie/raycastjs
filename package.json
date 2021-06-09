@@ -5,10 +5,10 @@
   },
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently --kill-others \"yarn dev:webpack\" \"yarn dev:serve\"",
-    "dev:webpack": "webpack --watch",
-    "dev:serve": "live-server public",
-    "build": "webpack",
+    "dev": "concurrently --kill-others \"yarn dev:webpack\" \"yarn start\"",
+    "dev:webpack": "webpack --watch --mode=development",
+    "start": "live-server public",
+    "build": "webpack --mode=production",
     "lint": "eslint src --ext .js,.ts"
   },
   "devDependencies": {

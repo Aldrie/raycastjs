@@ -105,24 +105,20 @@ export default class Rays {
 
     const rays = sceneContext.canvas.width;
     const fov = 60;
-    let currentAngle = player.angle - degressToRadians(30);
+    let currentAngle = player.angle - degressToRadians(fov / 2);
 
     const lineWidth = Math.floor(sceneContext.canvas.width / rays);
 
     for (let ray = 0; ray < rays; ray++) {
       const horizontal = this.horizontalRay(currentAngle);
       const vertical = this.verticalRay(currentAngle);
-      let currentRay: typeof horizontal;
+      const currentRay = horizontal.distance > vertical.distance ? vertical : horizontal;
 
-      let wallAlpha = 1;
+      let wallAlpha = 1 - (currentRay.distance / 1000);
 
-      if (horizontal.distance > vertical.distance) {
-        currentRay = vertical;
-      } else {
-        currentRay = horizontal;
-        wallAlpha = 0.6;
+      if (horizontal.distance < vertical.distance) {
+        wallAlpha -= 0.2;
       }
-
       mapContext.strokeStyle = Colors.RAY;
       mapContext.beginPath();
       mapContext.lineWidth = 1;

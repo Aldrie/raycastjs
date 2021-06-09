@@ -14,6 +14,7 @@ I'm using **Babel** and **Webpack** to transpile the code for browsers.
 - [x] Draw 3D walls
 - [x] Keyboard handler
 - [ ] Wall collision
+- [ ] Level maker
 - [ ] Textures
 - [ ] Pyshics
 - [ ] Sound
