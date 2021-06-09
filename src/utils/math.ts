@@ -24,3 +24,8 @@ export function distance(
 ) {
   return Math.sqrt(((x2 - x1) ** 2) + ((y2 - y1) ** 2));
 }
+
+// a = b
+// c = x
+
+export const proportion = (a: number, aResult: number, x: number) => (x * aResult) / a;

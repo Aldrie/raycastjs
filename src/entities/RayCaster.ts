@@ -17,8 +17,11 @@ export default class RayCaster {
 
   public rays: IRay[] = [];
 
-  constructor(player: Player) {
+  public raysCount = 0;
+
+  constructor(player: Player, raysCount: number) {
     this.player = player;
+    this.raysCount = raysCount;
   }
 
   private horizontalRay(map: Map, angle: number): Omit<IRay, 'angle'> {
@@ -109,21 +112,20 @@ export default class RayCaster {
   }
 
   update({ sceneContext, map }: GameContext) {
-    const { player } = this;
+    const { player, raysCount } = this;
 
-    const rays = sceneContext.canvas.width;
     const fov = 60;
     let currentAngle = player.angle - degressToRadians(fov / 2);
 
     this.rays = [];
 
-    for (let ray = 0; ray < rays; ray++) {
+    for (let ray = 0; ray < raysCount; ray++) {
       const horizontal = this.horizontalRay(map, currentAngle);
       const vertical = this.verticalRay(map, currentAngle);
       const currentRay = horizontal.distance > vertical.distance ? vertical : horizontal;
 
       this.rays.push({ ...currentRay, angle: currentAngle });
-      currentAngle += degressToRadians(fov / rays);
+      currentAngle += degressToRadians(fov / raysCount);
     }
   }
 }

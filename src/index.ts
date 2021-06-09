@@ -1,36 +1,25 @@
 import Stats from 'stats.js';
 
 import Player from './entities/Player';
-import Map from './entities/Map';
 import Keyboard from './entities/Keyboard';
 import Renderer from './entities/Renderer';
 
 import { setupCanvases } from './utils/canvas';
 import { GameContext } from './@types/game';
+import { getMap } from './maps/main';
 
 const mapNodeSize = 52;
 
-setupCanvases(8 * mapNodeSize, 8 * mapNodeSize);
+setupCanvases(mapNodeSize * 16, mapNodeSize * 16);
 
 const scene = document.getElementById('scene') as HTMLCanvasElement;
 const sceneContext = scene.getContext('2d');
 const miniMapScene = document.getElementById('map') as HTMLCanvasElement;
 const miniMapContext = miniMapScene.getContext('2d');
 
-const map = new Map(8, 8, mapNodeSize);
+const map = getMap(mapNodeSize);
 
-map.setMatrix([
-  [1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 1, 0, 0, 0, 0, 1],
-  [1, 0, 1, 0, 0, 0, 0, 1],
-  [1, 0, 1, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 1, 0, 1],
-  [1, 0, 0, 0, 0, 1, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1],
-]);
-
-const player = new Player(map.size + 10, map.size * 6);
+const player = new Player(mapNodeSize * 2, mapNodeSize * 2);
 const keyboard = new Keyboard();
 const renderer = new Renderer();
 
@@ -59,7 +48,7 @@ function update() {
 
 function draw() {
   renderer.draw(gameContext);
-  player.draw(miniMapContext);
+  player.draw(gameContext);
 }
 
 const stats = new Stats();

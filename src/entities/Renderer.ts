@@ -8,8 +8,9 @@ import { Colors } from '../constants/colors';
 export default class Renderer {
   public raycaster: RayCaster;
 
-  start({ player }: GameContext) {
-    this.raycaster = new RayCaster(player);
+  start({ player, sceneContext }: GameContext) {
+    const raysCount = Math.floor(sceneContext.canvas.width / 2);
+    this.raycaster = new RayCaster(player, raysCount);
   }
 
   update(context: GameContext) {
@@ -17,15 +18,16 @@ export default class Renderer {
   }
 
   private drawMiniMap({ miniMapContext, player, map }: GameContext) {
+    const nodeSize = Math.floor(miniMapContext.canvas.width / map.height);
+
     // grid
     for (let row = 0; row < map.height; row++) {
       for (let col = 0; col < map.width; col++) {
         const nodeValue = map.matrix[row][col];
         const nodeColor = nodeValue === 1 ? Colors.WALL : 'transparent';
 
-        const nodeX = col * map.size;
-        const nodeY = row * map.size;
-        const nodeSize = map.size;
+        const nodeX = col * nodeSize;
+        const nodeY = row * nodeSize;
 
         miniMapContext.fillStyle = nodeColor;
         miniMapContext.fillRect(nodeX, nodeY, nodeSize, nodeSize);
@@ -57,7 +59,8 @@ export default class Renderer {
       const currentRay = rays[ray];
 
       // shading start
-      let wallAlpha = 1 - (currentRay.distance / 1000);
+      const lightDepth = 750;
+      let wallAlpha = 1 - (clamp(currentRay.distance, 0, lightDepth) / (lightDepth * 2));
 
       if (!currentRay?.horizontal) {
         wallAlpha -= 0.2;

@@ -79,17 +79,17 @@ export default class Player {
     keyboard.handle(this.keyboardHandler);
   }
 
-  draw(context: CanvasRenderingContext2D) {
+  draw({ miniMapContext }: GameContext) {
     const { x, y } = getCenterCoords(this.x, this.y, this.width, this.height);
-    context.fillStyle = Colors.PLAYER;
-    context.fillRect(x, y, this.width, this.height);
+    miniMapContext.fillStyle = Colors.PLAYER;
+    miniMapContext.fillRect(x, y, this.width, this.height);
 
-    context.strokeStyle = Colors.PLAYER;
-    context.lineWidth = 2;
-    context.beginPath();
-    context.moveTo(this.x + this.deltaX * 20, this.y + this.deltaY * 20);
-    context.lineTo(this.x, this.y);
-    context.stroke();
-    context.closePath();
+    miniMapContext.strokeStyle = Colors.PLAYER;
+    miniMapContext.lineWidth = 2;
+    miniMapContext.beginPath();
+    miniMapContext.moveTo(this.x + this.deltaX * 20, this.y + this.deltaY * 20);
+    miniMapContext.lineTo(this.x, this.y);
+    miniMapContext.stroke();
+    miniMapContext.closePath();
   }
 }
