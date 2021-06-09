@@ -1,11 +1,9 @@
-interface IKeyboardHandler {
+export interface IKeyboardHandler {
   [key: string]: () => void;
 }
 
 export default class Keyboard {
   private pressedKeys: number[] = [];
-
-  private handler: IKeyboardHandler = null;
 
   private addKey(key: string) {
     const code = key.charCodeAt(0);
@@ -35,14 +33,15 @@ export default class Keyboard {
     return !!this.pressedKeys.find((currentKey) => currentKey === key.charCodeAt(0));
   }
 
-  setHandler(handler: IKeyboardHandler) {
-    this.handler = handler;
-  }
+  handle(handler: IKeyboardHandler) {
+    if (handler && this.pressedKeys.length > 0) {
+      const keys = Object.keys(handler).filter((key) => this.getKey(key));
 
-  throwHandler() {
-    if (this.handler && this.pressedKeys.length > 0) {
-      const { handler } = this;
-      Object.keys(handler).forEach((key) => {
+      if (keys.length <= 0) {
+        return;
+      }
+
+      keys.forEach((key) => {
         if (this.getKey(key)) {
           const func = handler[key];
           func();

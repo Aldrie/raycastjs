@@ -1,11 +1,14 @@
-import { Colors } from '../constants/colors';
 import { getCenterCoords } from '../utils/draw';
+import { Colors } from '../constants/colors';
 
-export enum PlayerDirections {
-  LEFT = 0,
-  RIGHT = 1,
-  UP = 2,
-  DOWN = 3,
+import { IKeyboardHandler } from './Keyboard';
+import { GameContext } from '../@types/game';
+
+export enum PlayerKeys {
+  LEFT = 'a',
+  RIGHT = 'd',
+  UP = 'w',
+  DOWN = 's',
 }
 
 export default class Player {
@@ -13,9 +16,9 @@ export default class Player {
 
   public y = 0;
 
-  public width = 8 ;
+  public width = 8;
 
-  public height = 8 ;
+  public height = 8;
 
   public speed = 2;
 
@@ -27,16 +30,18 @@ export default class Player {
 
   public angle = 0;
 
+  public keyboardHandler: IKeyboardHandler;
+
   constructor(x: number, y: number) {
     this.x = x;
     this.y = y;
   }
 
-  move(direction: PlayerDirections) {
+  start() {
     const { speed, rotationSpeed } = this;
 
     const directionsHandlers = {
-      [PlayerDirections.LEFT]: () => {
+      [PlayerKeys.LEFT]: () => {
         const newAngle = this.angle - rotationSpeed;
 
         if (newAngle < 0) {
@@ -47,7 +52,7 @@ export default class Player {
         this.deltaX = Math.cos(newAngle);
         this.deltaY = Math.sin(newAngle);
       },
-      [PlayerDirections.RIGHT]: () => {
+      [PlayerKeys.RIGHT]: () => {
         const newAngle = this.angle + rotationSpeed;
         if (newAngle > Math.PI * 2) {
           this.angle -= Math.PI * 2;
@@ -57,21 +62,21 @@ export default class Player {
         this.deltaX = Math.cos(newAngle);
         this.deltaY = Math.sin(newAngle);
       },
-      [PlayerDirections.UP]: () => {
+      [PlayerKeys.UP]: () => {
         this.x += this.deltaX * speed;
         this.y += this.deltaY * speed;
       },
-      [PlayerDirections.DOWN]: () => {
+      [PlayerKeys.DOWN]: () => {
         this.x -= this.deltaX * speed;
         this.y -= this.deltaY * speed;
       },
     };
 
-    const handler = directionsHandlers[direction];
+    this.keyboardHandler = directionsHandlers;
+  }
 
-    if (handler) {
-      handler();
-    }
+  update({ keyboard }: GameContext) {
+    keyboard.handle(this.keyboardHandler);
   }
 
   draw(context: CanvasRenderingContext2D) {

@@ -1,22 +1,28 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-bitwise */
-import { Colors } from '../constants/colors';
-import { clamp, degressToRadians, distance } from '../utils/math';
 import Map from './Map';
 import Player from './Player';
 
-export default class Rays {
+import { GameContext } from '../@types/game';
+import { degressToRadians, distance } from '../utils/math';
+
+interface IRay {
+  x: number;
+  y: number;
+  distance: number;
+  angle: number;
+  horizontal?: boolean;
+}
+
+export default class RayCaster {
   public player: Player;
 
-  public map: Map;
+  public rays: IRay[] = [];
 
-  constructor(player: Player, map: Map) {
+  constructor(player: Player) {
     this.player = player;
-    this.map = map;
   }
 
-  private horizontalRay(angle: number) {
-    const { player, map } = this;
+  private horizontalRay(map: Map, angle: number): Omit<IRay, 'angle'> {
+    const { player } = this;
 
     const rayAngle = angle;
 
@@ -53,11 +59,13 @@ export default class Rays {
       }
     }
 
-    return { x: nextX, y: nextY, distance: distance(player.x, player.y, nextX, nextY) };
+    return {
+      x: nextX, y: nextY, distance: distance(player.x, player.y, nextX, nextY), horizontal: true,
+    };
   }
 
-  private verticalRay(angle: number) {
-    const { player, map } = this;
+  private verticalRay(map: Map, angle: number): Omit<IRay, 'angle'> {
+    const { player } = this;
 
     const rayAngle = angle;
 
@@ -100,51 +108,21 @@ export default class Rays {
     return { x: nextX, y: nextY, distance: distance(player.x, player.y, nextX, nextY) };
   }
 
-  draw(mapContext: CanvasRenderingContext2D, sceneContext: CanvasRenderingContext2D) {
-    const { player, map } = this;
+  update({ sceneContext, map }: GameContext) {
+    const { player } = this;
 
     const rays = sceneContext.canvas.width;
     const fov = 60;
     let currentAngle = player.angle - degressToRadians(fov / 2);
 
-    const lineWidth = Math.floor(sceneContext.canvas.width / rays);
+    this.rays = [];
 
     for (let ray = 0; ray < rays; ray++) {
-      const horizontal = this.horizontalRay(currentAngle);
-      const vertical = this.verticalRay(currentAngle);
+      const horizontal = this.horizontalRay(map, currentAngle);
+      const vertical = this.verticalRay(map, currentAngle);
       const currentRay = horizontal.distance > vertical.distance ? vertical : horizontal;
 
-      let wallAlpha = 1 - (currentRay.distance / 1000);
-
-      if (horizontal.distance < vertical.distance) {
-        wallAlpha -= 0.2;
-      }
-      mapContext.strokeStyle = Colors.RAY;
-      mapContext.beginPath();
-      mapContext.lineWidth = 1;
-      mapContext.moveTo(player.x, player.y);
-      mapContext.lineTo(currentRay.x, currentRay.y);
-      mapContext.stroke();
-      mapContext.closePath();
-
-      // 3D ---
-
-      let cosAngle = player.angle - currentAngle;
-      if (cosAngle < 0) cosAngle += Math.PI * 2;
-      if (Math.PI * 2) cosAngle -= Math.PI * 2;
-
-      const normalizedDistance = currentRay.distance * Math.cos(cosAngle); // fish eye fix
-
-      const lineHeight = clamp(
-        (map.size * sceneContext.canvas.height) / normalizedDistance,
-        0, sceneContext.canvas.height,
-      );
-
-      const lineOffset = (sceneContext.canvas.height / 2) - (lineHeight / 2);
-
-      sceneContext.fillStyle = Colors.WALL;
-      sceneContext.globalAlpha = wallAlpha;
-      sceneContext.fillRect(ray * lineWidth, lineOffset, lineWidth, lineHeight);
+      this.rays.push({ ...currentRay, angle: currentAngle });
       currentAngle += degressToRadians(fov / rays);
     }
   }

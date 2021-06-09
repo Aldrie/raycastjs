@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 function resizeCanvas(canvasId: string, width: number, height: number) {
   const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
   canvas.width = width;

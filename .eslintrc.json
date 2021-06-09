@@ -35,6 +35,9 @@
     "no-shadow": "off",
     "@typescript-eslint/no-shadow": ["error"],
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "no-plusplus": "off"
+    "no-plusplus": "off",
+    "no-param-reassign": "off",
+    "no-restricted-syntax": "off",
+    "class-methods-use-this": "off"
   }
 }
