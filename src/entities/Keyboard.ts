@@ -3,16 +3,20 @@ interface IKeyboardHandler {
 }
 
 export default class Keyboard {
-  private pressedKeys: string[] = [];
+  private pressedKeys: number[] = [];
 
   private handler: IKeyboardHandler = null;
 
   private addKey(key: string) {
-    this.pressedKeys.push(key);
+    const code = key.charCodeAt(0);
+
+    if (this.pressedKeys.indexOf(code) === -1) {
+      this.pressedKeys.push(code);
+    }
   }
 
   private removeKey(key: string) {
-    this.pressedKeys = this.pressedKeys.filter((currentKey) => currentKey !== key);
+    this.pressedKeys = this.pressedKeys.filter((currentKey) => currentKey !== key.charCodeAt(0));
   }
 
   constructor() {
@@ -28,7 +32,7 @@ export default class Keyboard {
   }
 
   getKey(key: string) {
-    return !!this.pressedKeys.find((currentKey) => currentKey === key);
+    return !!this.pressedKeys.find((currentKey) => currentKey === key.charCodeAt(0));
   }
 
   setHandler(handler: IKeyboardHandler) {
