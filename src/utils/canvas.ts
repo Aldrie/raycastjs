@@ -9,9 +9,16 @@ function handleWindowResize() {
   resizeCanvas('scene', innerWidth, innerHeight);
 }
 
-export function setupCanvases(mapWidth: number, mapHeight: number) {
+interface ISetupCanvasesOptions {
+  miniMap: {
+    width: number,
+    height: number,
+  }
+}
+
+export function setupCanvases({ miniMap }: ISetupCanvasesOptions) {
   // handleWindowResize();
   // window.addEventListener('resize', handleWindowResize);
-  resizeCanvas('map', mapWidth, mapHeight);
+  resizeCanvas('map', miniMap.width, miniMap.height);
   resizeCanvas('scene', 1024, 950);
 }

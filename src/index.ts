@@ -6,20 +6,18 @@ import Renderer from './entities/Renderer';
 
 import { setupCanvases } from './utils/canvas';
 import { GameContext } from './@types/game';
-import { getMap } from './maps/main';
+import { mainMap } from './maps/main';
 
-const mapNodeSize = 52;
-
-setupCanvases(mapNodeSize * 16, mapNodeSize * 16);
+setupCanvases({
+  miniMap: { width: 200, height: 200 },
+});
 
 const scene = document.getElementById('scene') as HTMLCanvasElement;
 const sceneContext = scene.getContext('2d');
 const miniMapScene = document.getElementById('map') as HTMLCanvasElement;
 const miniMapContext = miniMapScene.getContext('2d');
 
-const map = getMap(mapNodeSize);
-
-const player = new Player(mapNodeSize * 2, mapNodeSize * 2);
+const player = new Player(52, 52);
 const keyboard = new Keyboard();
 const renderer = new Renderer();
 
@@ -28,7 +26,7 @@ const gameContext: GameContext = {
   miniMapContext,
   sceneContext,
   player,
-  map,
+  map: mainMap,
 };
 
 function clearScene() {
@@ -48,7 +46,6 @@ function update() {
 
 function draw() {
   renderer.draw(gameContext);
-  player.draw(gameContext);
 }
 
 const stats = new Stats();

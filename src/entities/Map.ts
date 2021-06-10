@@ -3,17 +3,14 @@ export default class Map {
 
   public height: number;
 
-  public size: number;
+  public size = 52;
 
   public matrix: number[][] = [];
 
-  constructor(width: number, height: number, size: number) {
-    this.width = width;
-    this.height = height;
-    this.size = size;
-  }
-
-  setMatrix(matrix: number[][]) {
+  constructor(matrix: number[][]) {
     this.matrix = matrix;
+
+    this.width = matrix[0].length;
+    this.height = matrix.length;
   }
 }

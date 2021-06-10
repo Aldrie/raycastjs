@@ -1,9 +1,10 @@
 import RayCaster from './RayCaster';
 
-import { clamp } from '../utils/math';
+import { clamp, proportion } from '../utils/math';
 
 import { GameContext } from '../@types/game';
 import { Colors } from '../constants/colors';
+import { getCenterCoords } from '../utils/draw';
 
 export default class Renderer {
   public raycaster: RayCaster;
@@ -17,8 +18,18 @@ export default class Renderer {
     this.raycaster.update(context);
   }
 
-  private drawMiniMap({ miniMapContext, player, map }: GameContext) {
+  private drawMiniMap(context: GameContext) {
+    const { miniMapContext, player, map } = context;
     const nodeSize = Math.floor(miniMapContext.canvas.width / map.height);
+
+    const getAdjustedValue = (value: number) => Math.floor((value / map.size) * nodeSize);
+
+    // player correct coords
+    const playerX = getAdjustedValue(player.x);
+    const playerY = getAdjustedValue(player.y);
+    const playerWidth = getAdjustedValue(player.width);
+    const playerHeight = getAdjustedValue(player.height);
+    const playerDirectionRayLength = getAdjustedValue(50);
 
     // grid
     for (let row = 0; row < map.height; row++) {
@@ -38,14 +49,33 @@ export default class Renderer {
     }
     // rays
     for (const ray of this.raycaster.rays) {
+      const rayX = getAdjustedValue(ray.x);
+      const rayY = getAdjustedValue(ray.y);
+
       miniMapContext.strokeStyle = Colors.RAY;
       miniMapContext.beginPath();
       miniMapContext.lineWidth = 1;
-      miniMapContext.moveTo(player.x, player.y);
-      miniMapContext.lineTo(ray.x, ray.y);
+      miniMapContext.moveTo(playerX + (playerWidth / 2), playerY + (playerHeight / 2));
+      miniMapContext.lineTo(rayX, rayY);
       miniMapContext.stroke();
       miniMapContext.closePath();
     }
+
+    // draw player
+    miniMapContext.fillStyle = Colors.PLAYER;
+    miniMapContext.fillRect(playerX, playerY, playerWidth, playerHeight);
+
+    // player direction line
+    miniMapContext.strokeStyle = Colors.PLAYER;
+    miniMapContext.lineWidth = 2;
+    miniMapContext.beginPath();
+    miniMapContext.moveTo(playerX + (playerWidth / 2), playerY + (playerHeight / 2));
+    miniMapContext.lineTo(
+      playerX + player.deltaX * playerDirectionRayLength,
+      playerY + player.deltaY * playerDirectionRayLength,
+    );
+    miniMapContext.stroke();
+    miniMapContext.closePath();
   }
 
   draw(context: GameContext) {

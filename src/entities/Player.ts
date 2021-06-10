@@ -16,9 +16,9 @@ export default class Player {
 
   public y = 0;
 
-  public width = 8;
+  public width = 24;
 
-  public height = 8;
+  public height = 24;
 
   public speed = 2;
 
@@ -77,19 +77,5 @@ export default class Player {
 
   update({ keyboard }: GameContext) {
     keyboard.handle(this.keyboardHandler);
-  }
-
-  draw({ miniMapContext }: GameContext) {
-    const { x, y } = getCenterCoords(this.x, this.y, this.width, this.height);
-    miniMapContext.fillStyle = Colors.PLAYER;
-    miniMapContext.fillRect(x, y, this.width, this.height);
-
-    miniMapContext.strokeStyle = Colors.PLAYER;
-    miniMapContext.lineWidth = 2;
-    miniMapContext.beginPath();
-    miniMapContext.moveTo(this.x + this.deltaX * 20, this.y + this.deltaY * 20);
-    miniMapContext.lineTo(this.x, this.y);
-    miniMapContext.stroke();
-    miniMapContext.closePath();
   }
 }
